@@ -1,0 +1,19 @@
+{
+  "name": "provac-backend",
+  "version": "1.0.0",
+  "description": "Backend API para app de levantamiento de bandas PROVAC",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "keywords": ["provac", "bandas", "levantamiento"],
+  "author": "Francis PROVAC",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "@supabase/supabase-js": "^2.38.0"
+  }
+}
