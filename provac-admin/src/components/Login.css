@@ -1,0 +1,104 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(180deg, #0D4C92 0%, #082F5C 100%);
+  font-family: Arial, sans-serif;
+}
+
+.login-box {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-logo {
+  display: block;
+  height: 56px;
+  width: auto;
+  margin: 0 auto 12px;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: #0D4C92;
+  font-weight: 600;
+  margin-bottom: 26px;
+  font-size: 14px;
+}
+
+.login-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-box input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.login-box input:focus {
+  outline: none;
+  border-color: #0D4C92;
+}
+
+.login-box button {
+  padding: 12px;
+  background-color: #0D4C92;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-box button:hover:not(:disabled) {
+  background-color: #082F5C;
+}
+
+.login-box button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.login-box .error {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.login-link-recuperar {
+  background: none;
+  border: none;
+  color: #0D4C92;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.login-recuperar-texto {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 18px !important;
+  text-align: left;
+}
+
+.login-recuperar-mensaje {
+  color: #2E7D32;
+  font-size: 13px;
+  margin-top: 14px;
+  text-align: center;
+}

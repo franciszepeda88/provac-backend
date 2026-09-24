@@ -9,7 +9,8 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Permitir fotos en base64
+app.use(express.urlencoded({ limit: '50mb' }));
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -39,11 +40,19 @@ const verificarToken = (req, res, next) => {
   }
 };
 
+// Requiere además que el usuario autenticado sea admin (usar después de verificarToken)
+const verificarAdmin = (req, res, next) => {
+  if (req.usuario?.rol !== 'admin') {
+    return res.status(403).json({ error: 'Solo un administrador puede realizar esta acción' });
+  }
+  next();
+};
+
 // ============================================
 // 🔐 AUTENTICACIÓN
 // ============================================
 
-app.post('/api/auth/register', async (req, res) => {
+app.post('/api/auth/register', verificarToken, verificarAdmin, async (req, res) => {
   try {
     const { email, password, nombre, rol } = req.body;
 
@@ -76,6 +85,76 @@ app.post('/api/auth/register', async (req, res) => {
 
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// LISTAR usuarios (solo admin): GET /api/usuarios
+// No devuelve el hash de la contraseña.
+app.get('/api/usuarios', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, email, nombre, rol, created_at, reset_solicitado_en')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ mensaje: '✅ Usuarios obtenidos', usuarios: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// RESTABLECER contraseña de un usuario (solo admin): PUT /api/usuarios/:id/reset-password
+// No requiere correo/SMTP: el admin define la nueva contraseña directamente
+// y se la comunica al técnico por el medio que prefiera.
+app.put('/api/usuarios/:id/reset-password', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ error: 'La contraseña debe tener al menos 6 caracteres' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const { error } = await supabase
+      .from('users')
+      .update({ password: hashedPassword, reset_solicitado_en: null })
+      .eq('id', id);
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ mensaje: '✅ Contraseña actualizada' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// SOLICITAR RESTABLECIMIENTO de contraseña (público, sin login): POST /api/auth/solicitar-reset
+// No hay servicio de correo configurado todavía, así que esto NO envía ningún email:
+// marca la solicitud para que el admin la vea en el panel de Usuarios y le comparta
+// la nueva contraseña al técnico por el medio que prefiera (WhatsApp, en persona, etc).
+app.post('/api/auth/solicitar-reset', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (email) {
+      await supabase
+        .from('users')
+        .update({ reset_solicitado_en: new Date() })
+        .eq('email', email);
+    }
+    // Respuesta genérica siempre, exista o no el correo, para no revelar qué
+    // correos están registrados.
+    res.json({ mensaje: 'Si el correo existe, tu solicitud fue registrada.' });
+  } catch (err) {
+    // Aun si algo falla, no delatamos detalles al cliente no autenticado.
+    res.json({ mensaje: 'Si el correo existe, tu solicitud fue registrada.' });
   }
 });
 
@@ -130,22 +209,47 @@ app.post('/api/auth/login', async (req, res) => {
 // ============================================
 
 // CREAR levantamiento: POST /api/levantamientos
+// Estructura flexible: campos comunes como columnas, el resto en "datos" (JSON)
 app.post('/api/levantamientos', verificarToken, async (req, res) => {
   try {
-    const { cliente_nombre, banda_tipo, banda_ancho, banda_largo, accesorios, notas } = req.body;
+    const {
+      tipo_banda,
+      folio,
+      cliente_nombre,
+      ubicacion,
+      estado,
+      fotos,
+      firma_tecnico,
+      firma_cliente,
+      datos
+    } = req.body;
     const user_id = req.usuario.id;
+
+    if (!tipo_banda || !cliente_nombre) {
+      return res.status(400).json({ error: 'Faltan campos requeridos (tipo_banda, cliente_nombre)' });
+    }
+
+    // Generar folio automatico (correlativo LEV-00001, LEV-00002, ...)
+    let folioFinal = folio;
+    if (!folioFinal || folioFinal === 'AUTO') {
+      const { data: folioData, error: folioError } = await supabase.rpc('siguiente_folio');
+      folioFinal = folioError ? '' : folioData;
+    }
 
     const { data, error } = await supabase
       .from('levantamientos')
       .insert([
         {
           user_id,
+          tipo_banda,
+          folio: folioFinal,
           cliente_nombre,
-          banda_tipo,
-          banda_ancho,
-          banda_largo,
-          accesorios,
-          notas
+          ubicacion: ubicacion || '',
+          estado: estado || 'borrador',
+          fotos: fotos || [],
+          firma_tecnico: firma_tecnico || '',
+          firma_cliente: firma_cliente || '',
+          datos: datos || {}
         }
       ])
       .select();
@@ -164,16 +268,35 @@ app.post('/api/levantamientos', verificarToken, async (req, res) => {
   }
 });
 
-// OBTENER mis levantamientos: GET /api/levantamientos
+// SIGUIENTE FOLIO: GET /api/folio/siguiente
+// Reserva y devuelve el siguiente folio correlativo (LEV-00001, LEV-00002, ...)
+// para que el técnico lo vea de inmediato al abrir un levantamiento nuevo,
+// en vez de ver solo el texto "AUTO" hasta que guarda.
+app.get('/api/folio/siguiente', verificarToken, async (req, res) => {
+  try {
+    const { data: folioData, error: folioError } = await supabase.rpc('siguiente_folio');
+    if (folioError) {
+      return res.status(400).json({ error: folioError.message });
+    }
+    res.json({ folio: folioData });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// OBTENER levantamientos: GET /api/levantamientos
 app.get('/api/levantamientos', verificarToken, async (req, res) => {
   try {
     const user_id = req.usuario.id;
     const rol = req.usuario.rol;
 
-    let query = supabase.from('levantamientos').select('*');
+    // La lista NO incluye fotos ni firmas: son imágenes en base64 y son el peso real
+    // de cada registro. Se piden aparte, solo cuando se abre el detalle de un
+    // levantamiento (GET /api/levantamientos/:id), para que la lista cargue rápido.
+    let query = supabase
+      .from('levantamientos')
+      .select('id, user_id, tipo_banda, folio, cliente_nombre, ubicacion, estado, datos, created_at, updated_at');
 
-    // Si es technician, ve solo sus datos
-    // Si es admin, ve TODOS
     if (rol === 'technician') {
       query = query.eq('user_id', user_id);
     }
@@ -195,12 +318,43 @@ app.get('/api/levantamientos', verificarToken, async (req, res) => {
   }
 });
 
+// OBTENER UN levantamiento completo (con fotos y firmas): GET /api/levantamientos/:id
+app.get('/api/levantamientos/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.usuario.id;
+    const rol = req.usuario.rol;
+
+    const { data, error } = await supabase
+      .from('levantamientos')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: 'Levantamiento no encontrado' });
+    }
+
+    if (rol === 'technician' && data.user_id !== user_id) {
+      return res.status(403).json({ error: 'No autorizado' });
+    }
+
+    res.json({
+      mensaje: '✅ Levantamiento obtenido',
+      levantamiento: data
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ACTUALIZAR levantamiento: PUT /api/levantamientos/:id
 app.put('/api/levantamientos/:id', verificarToken, async (req, res) => {
   try {
     const { id } = req.params;
     const user_id = req.usuario.id;
-    const { cliente_nombre, banda_tipo, banda_ancho, banda_largo, accesorios, notas } = req.body;
+    const updateData = req.body;
 
     // Verificar que sea el propietario o admin
     const { data: levantamiento } = await supabase
@@ -217,17 +371,11 @@ app.put('/api/levantamientos/:id', verificarToken, async (req, res) => {
       return res.status(403).json({ error: 'No autorizado' });
     }
 
+    updateData.updated_at = new Date();
+
     const { data, error } = await supabase
       .from('levantamientos')
-      .update({
-        cliente_nombre,
-        banda_tipo,
-        banda_ancho,
-        banda_largo,
-        accesorios,
-        notas,
-        updated_at: new Date()
-      })
+      .update(updateData)
       .eq('id', id)
       .select();
 
@@ -246,12 +394,16 @@ app.put('/api/levantamientos/:id', verificarToken, async (req, res) => {
 });
 
 // ELIMINAR levantamiento: DELETE /api/levantamientos/:id
+// Solo el rol admin puede borrar (limpieza de datos). Los técnicos, aunque sean
+// dueños del registro, no pueden eliminar levantamientos desde ningún lado.
 app.delete('/api/levantamientos/:id', verificarToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const user_id = req.usuario.id;
 
-    // Verificar propiedad
+    if (req.usuario.rol !== 'admin') {
+      return res.status(403).json({ error: 'Solo un administrador puede eliminar levantamientos' });
+    }
+
     const { data: levantamiento } = await supabase
       .from('levantamientos')
       .select('*')
@@ -260,10 +412,6 @@ app.delete('/api/levantamientos/:id', verificarToken, async (req, res) => {
 
     if (!levantamiento) {
       return res.status(404).json({ error: 'Levantamiento no encontrado' });
-    }
-
-    if (levantamiento.user_id !== user_id && req.usuario.rol !== 'admin') {
-      return res.status(403).json({ error: 'No autorizado' });
     }
 
     const { error } = await supabase
@@ -291,7 +439,7 @@ app.delete('/api/levantamientos/:id', verificarToken, async (req, res) => {
 app.get('/api/test', (req, res) => {
   res.json({
     mensaje: '¡Backend de PROVAC funcionando! ✅',
-    version: '1.0.0',
+    version: '2.0.0 - Con soporte para fotos, firmas y condición',
     timestamp: new Date().toISOString()
   });
 });
@@ -304,13 +452,15 @@ app.get('/health', (req, res) => {
 // 🚀 INICIAR SERVIDOR
 // ============================================
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔════════════════════════════════════════╗
-║  🚀 PROVAC Backend Ejecutándose       ║
-║  URL: http://localhost:${PORT}            ║
+║  🚀 PROVAC Backend v2.0 Ejecutándose  ║
+║  URL: http://192.168.0.27:${PORT}            ║
 ║  Auth: POST /api/auth/login            ║
 ║  Levantamientos: GET /api/levantamientos ║
+║  Fotos: Soportadas en base64           ║
+║  Firmas: Soportadas                    ║
 ╚════════════════════════════════════════╝
   `);
 });

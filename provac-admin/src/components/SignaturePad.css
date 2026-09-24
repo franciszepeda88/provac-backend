@@ -1,0 +1,62 @@
+.signature-pad-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.signature-pad-container label {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.sp-locked-badge {
+  display: inline-block;
+  width: fit-content;
+  background: #E8F5E9;
+  color: #2E7D32;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.signature-canvas {
+  touch-action: none;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: crosshair;
+  background-color: #fff;
+  display: block;
+  width: 100%;
+  max-width: 300px;
+}
+
+.signature-canvas-locked {
+  cursor: default;
+  border-color: #4CAF50;
+  background-color: #fafafa;
+}
+
+.clear-signature-btn {
+  padding: 8px 12px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: fit-content;
+}
+
+.clear-signature-btn:hover {
+  background-color: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.clear-signature-btn:active {
+  transform: translateY(0);
+}
