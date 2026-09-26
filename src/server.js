@@ -107,6 +107,38 @@ app.get('/api/usuarios', verificarToken, verificarAdmin, async (req, res) => {
   }
 });
 
+// EDITAR datos de un usuario (solo admin): PUT /api/usuarios/:id
+// Permite cambiar nombre, correo y rol. No toca la contraseña.
+app.put('/api/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, email, rol } = req.body;
+
+    if (!nombre || !email) {
+      return res.status(400).json({ error: 'Nombre y correo son obligatorios' });
+    }
+    if (rol && rol !== 'admin' && rol !== 'technician') {
+      return res.status(400).json({ error: 'Rol inválido' });
+    }
+
+    const { error } = await supabase
+      .from('users')
+      .update({ nombre, email, ...(rol ? { rol } : {}) })
+      .eq('id', id);
+
+    if (error) {
+      if (error.message && error.message.toLowerCase().includes('duplicate')) {
+        return res.status(400).json({ error: 'Ya existe un usuario con ese correo' });
+      }
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ mensaje: '✅ Usuario actualizado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // RESTABLECER contraseña de un usuario (solo admin): PUT /api/usuarios/:id/reset-password
 // No requiere correo/SMTP: el admin define la nueva contraseña directamente
 // y se la comunica al técnico por el medio que prefiera.
@@ -233,6 +265,9 @@ app.post('/api/levantamientos', verificarToken, async (req, res) => {
     let folioFinal = folio;
     if (!folioFinal || folioFinal === 'AUTO') {
       const { data: folioData, error: folioError } = await supabase.rpc('siguiente_folio');
+      if (folioError) {
+        console.error('❌ Error generando folio automático al guardar (rpc siguiente_folio):', folioError.message);
+      }
       folioFinal = folioError ? '' : folioData;
     }
 
@@ -276,10 +311,12 @@ app.get('/api/folio/siguiente', verificarToken, async (req, res) => {
   try {
     const { data: folioData, error: folioError } = await supabase.rpc('siguiente_folio');
     if (folioError) {
+      console.error('❌ Error en /api/folio/siguiente (rpc siguiente_folio):', folioError.message);
       return res.status(400).json({ error: folioError.message });
     }
     res.json({ folio: folioData });
   } catch (err) {
+    console.error('❌ Error en /api/folio/siguiente:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

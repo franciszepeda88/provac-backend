@@ -7,7 +7,7 @@ const TOTAL_PASOS = 11;
 const TITULOS = [
   'Datos del Cliente',
   'Aplicación & Condiciones',
-  'Especificación de Banda',
+  'Especificación de la Banda',
   'Dimensiones de la Banda',
   'Empalme',
   'Poleas, Ejes y Montaje',
@@ -38,69 +38,52 @@ const initialData = {
   tecnico_provac: '',
   vendedor: '',
   // Paso 2 - Aplicación y Condiciones
-  maquina_impulsada: '',
   potencia_motor: '',
   rpm_motor: '',
-  rpm_conducida: '',
-  relacion_transmision: '',
   horas_operacion_dia: '',
   temp_trabajo: '',
-  arranques_dia: '',
-  tipo_carga: '',
   ambiente_contacto: [],
+  ambiente_contacto_otro: '',
   motivo_cambio: [],
   // Paso 3 - Especificación de Banda
   linea_habasit: '',
   codigo_articulo: '',
   referencia_actual: '',
   marca_actual: '',
-  construccion: '',
   material_nucleo: '',
+  material_nucleo_otro: '',
   superficie_traccion: '',
+  superficie_traccion_otro: '',
   superficie_carga: '',
+  superficie_carga_otro: '',
   color: '',
-  dureza_shore: '',
   espesor_total: '',
-  traccion_rigidez: '',
   certificaciones: [],
   // Paso 4 - Dimensiones
   ancho_banda: '',
   largo_total_perimetro: '',
   distancia_centros: '',
-  largo_abierto_tensor: '',
   espesor_total_dim: '',
-  tolerancia_largo: '',
   cantidad_bandas: '',
-  unidades_juego: '',
   // Paso 5 - Empalme
   tipo_empalme: '',
-  metodo_union: '',
+  tipo_empalme_otro: '',
   largo_empalme: '',
   angulo_empalme: '',
-  num_dedos_escalones: '',
-  ubicacion_empalme: '',
-  empalme_a_realizar: '',
   lugar_empalme: '',
   // Paso 6 - Poleas, Ejes y Montaje
   poleas: {
     motriz: { ...poleaVacia },
-    conducida: { ...poleaVacia },
-    tensora1: { ...poleaVacia },
-    tensora2: { ...poleaVacia }
+    conducida: { ...poleaVacia }
   },
-  angulo_contacto_motriz: '',
   montaje_orientacion: '',
   rango_ajuste_tensor: '',
-  tipo_polea: [],
   sistema_tensado: '',
   estado_poleas: [],
   // Paso 7 - Estado del Equipo e Instalación
   dano_banda_actual: [],
   acceso_instalar: [],
   instalacion_entrega: '',
-  evidencia_recopilada: [],
-  fecha_requerida_entrega: '',
-  num_fotos_tomadas: '',
   // Paso 8 - Observaciones
   observaciones: '',
   // Paso 9 - Fotos
@@ -124,9 +107,7 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
       ...datos,
       poleas: {
         motriz: { ...poleaVacia, ...((datos && datos.poleas && datos.poleas.motriz) || {}) },
-        conducida: { ...poleaVacia, ...((datos && datos.poleas && datos.poleas.conducida) || {}) },
-        tensora1: { ...poleaVacia, ...((datos && datos.poleas && datos.poleas.tensora1) || {}) },
-        tensora2: { ...poleaVacia, ...((datos && datos.poleas && datos.poleas.tensora2) || {}) }
+        conducida: { ...poleaVacia, ...((datos && datos.poleas && datos.poleas.conducida) || {}) }
       },
       folio: folio || initialData.folio,
       empresa: cliente_nombre || '',
@@ -278,9 +259,7 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
 
   const POLEAS_LABELS = {
     motriz: 'Motriz (motor)',
-    conducida: 'Conducida',
-    tensora1: 'Tensora / loca 1',
-    tensora2: 'Tensora / loca 2'
+    conducida: 'Conducida'
   };
 
   return (
@@ -419,73 +398,44 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
 
               <div className="bt-row">
                 <div className="bt-field">
-                  <label>Máquina impulsada</label>
-                  <input value={data.maquina_impulsada} onChange={e => setField('maquina_impulsada', e.target.value)} />
-                </div>
-                <div className="bt-field">
                   <label>Potencia del motor (kW / HP)</label>
                   <input value={data.potencia_motor} onChange={e => setField('potencia_motor', e.target.value)} />
                 </div>
-              </div>
-              <div className="bt-row">
                 <div className="bt-field">
                   <label>RPM motor</label>
                   <input type="number" value={data.rpm_motor} onChange={e => setField('rpm_motor', e.target.value)} />
                 </div>
-                <div className="bt-field">
-                  <label>RPM conducida</label>
-                  <input type="number" value={data.rpm_conducida} onChange={e => setField('rpm_conducida', e.target.value)} />
-                </div>
               </div>
               <div className="bt-row">
-                <div className="bt-field">
-                  <label>Relación de transmisión</label>
-                  <input value={data.relacion_transmision} onChange={e => setField('relacion_transmision', e.target.value)} />
-                </div>
                 <div className="bt-field">
                   <label>Horas de operación / día</label>
                   <input type="number" value={data.horas_operacion_dia} onChange={e => setField('horas_operacion_dia', e.target.value)} />
                 </div>
-              </div>
-              <div className="bt-row">
                 <div className="bt-field">
                   <label>Temp. de trabajo (°C)</label>
                   <input type="number" value={data.temp_trabajo} onChange={e => setField('temp_trabajo', e.target.value)} />
-                </div>
-                <div className="bt-field">
-                  <label>Arranques por día</label>
-                  <input type="number" value={data.arranques_dia} onChange={e => setField('arranques_dia', e.target.value)} />
-                </div>
-              </div>
-
-              <div className="bt-field">
-                <label>Tipo de carga</label>
-                <div className="bt-radio-grid">
-                  {['Uniforme', 'Choque moderado', 'Choque fuerte / impacto'].map(op => (
-                    <label key={op} className="bt-radio">
-                      <input type="radio" name="tipo_carga" checked={data.tipo_carga === op} onChange={() => setField('tipo_carga', op)} />
-                      {op}
-                    </label>
-                  ))}
                 </div>
               </div>
 
               <div className="bt-field">
                 <label>Ambiente / contacto</label>
                 <div className="bt-check-grid">
-                  {['Seco', 'Húmedo', 'Aceite / grasa', 'Polvo / abrasivo', 'Químicos / solventes', 'Alta temperatura', 'Intemperie / UV', 'Contacto con alimentos', 'Antiestática (ESD)'].map(op => (
+                  {['Seco', 'Húmedo', 'Aceite / grasa', 'Polvo / abrasivo', 'Químicos / solventes', 'Alta temperatura', 'Intemperie / UV', 'Contacto con alimentos', 'Antiestática (ESD)', 'Otro'].map(op => (
                     <label key={op} className="bt-check">
                       <input type="checkbox" checked={data.ambiente_contacto.includes(op)} onChange={() => toggleCheck('ambiente_contacto', op)} />
                       {op}
                     </label>
                   ))}
                 </div>
+                {data.ambiente_contacto.includes('Otro') && (
+                  <input placeholder="Especificar otro ambiente / contacto" value={data.ambiente_contacto_otro} onChange={e => setField('ambiente_contacto_otro', e.target.value)} />
+                )}
               </div>
 
               <div className="bt-field">
                 <label>Motivo del cambio</label>
                 <div className="bt-check-grid">
-                  {['Desgaste de superficie', 'Patina / resbalamiento', 'Pérdida de tensión / estiramiento', 'Empalme abierto / dañado', 'Ruido / vibración', 'Desalineación', 'Rotura', 'Contaminación', 'Equipo nuevo'].map(op => (
+                  {['Desgaste de superficie', 'Patina / Resbala', 'Pérdida de tensión / Elongación', 'Empalme abierto / dañado', 'Ruido / vibración', 'Desalineación', 'Rotura', 'Contaminación', 'Equipo nuevo'].map(op => (
                     <label key={op} className="bt-check">
                       <input type="checkbox" checked={data.motivo_cambio.includes(op)} onChange={() => toggleCheck('motivo_cambio', op)} />
                       {op}
@@ -498,12 +448,12 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
 
           {step === 3 && (
             <div className="bt-step">
-              <h2>Especificación de la Banda (Habasit)</h2>
+              <h2>Especificación de la Banda</h2>
 
               <div className="bt-row">
                 <div className="bt-field">
-                  <label>Línea / familia Habasit</label>
-                  <input placeholder="Ej: NOVO, XTREME, TTAK..." value={data.linea_habasit} onChange={e => setField('linea_habasit', e.target.value)} />
+                  <label>Línea Familia</label>
+                  <input value={data.linea_habasit} onChange={e => setField('linea_habasit', e.target.value)} />
                 </div>
                 <div className="bt-field">
                   <label>Código de artículo / referencia</label>
@@ -512,7 +462,7 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
               </div>
               <div className="bt-row">
                 <div className="bt-field">
-                  <label>Referencia banda actual (si no es Habasit)</label>
+                  <label>Referencia banda actual</label>
                   <input value={data.referencia_actual} onChange={e => setField('referencia_actual', e.target.value)} />
                 </div>
                 <div className="bt-field">
@@ -522,39 +472,33 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
               </div>
 
               <div className="bt-field">
-                <label>Construcción</label>
+                <label>Material del núcleo</label>
                 <div className="bt-radio-grid">
-                  {['Base textil (tejido de poliéster / poliamida)', 'Monolítica termoplástica (TPU/PU)', 'Multicapa reforzada', 'Con cable de tracción', 'Otra'].map(op => (
-                    <label key={op} className="bt-radio">
-                      <input type="radio" name="construccion" checked={data.construccion === op} onChange={() => setField('construccion', op)} />
-                      {op}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bt-field">
-                <label>Material del núcleo / carcasa</label>
-                <div className="bt-radio-grid">
-                  {['Poliéster (PET)', 'Poliamida (PA)', 'Aramida', 'Algodón', 'Acero (cable)', 'No aplica / monolítica'].map(op => (
+                  {['Poliéster (PET)', 'Poliamida (PA)', 'Aramida', 'Algodón', 'Acero (cable)', 'Otro'].map(op => (
                     <label key={op} className="bt-radio">
                       <input type="radio" name="material_nucleo" checked={data.material_nucleo === op} onChange={() => setField('material_nucleo', op)} />
                       {op}
                     </label>
                   ))}
                 </div>
+                {data.material_nucleo === 'Otro' && (
+                  <input placeholder="Especificar material del núcleo" value={data.material_nucleo_otro} onChange={e => setField('material_nucleo_otro', e.target.value)} />
+                )}
               </div>
 
               <div className="bt-field">
                 <label>Superficie de tracción (lado polea)</label>
                 <div className="bt-radio-grid">
-                  {['Cromo (leather-like)', 'Caucho / goma', 'Poliuretano (PU)', 'Tejido / Perlon', 'Lisa termosoldada', 'Otra'].map(op => (
+                  {['Cuero', 'Caucho / goma', 'Poliuretano (PU)', 'Tejido / Perlon', 'Otra'].map(op => (
                     <label key={op} className="bt-radio">
                       <input type="radio" name="superficie_traccion" checked={data.superficie_traccion === op} onChange={() => setField('superficie_traccion', op)} />
                       {op}
                     </label>
                   ))}
                 </div>
+                {data.superficie_traccion === 'Otra' && (
+                  <input placeholder="Especificar superficie de tracción" value={data.superficie_traccion_otro} onChange={e => setField('superficie_traccion_otro', e.target.value)} />
+                )}
               </div>
 
               <div className="bt-field">
@@ -567,6 +511,9 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
                     </label>
                   ))}
                 </div>
+                {data.superficie_carga === 'Otra' && (
+                  <input placeholder="Especificar superficie de carga" value={data.superficie_carga_otro} onChange={e => setField('superficie_carga_otro', e.target.value)} />
+                )}
               </div>
 
               <div className="bt-row">
@@ -575,18 +522,8 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
                   <input value={data.color} onChange={e => setField('color', e.target.value)} />
                 </div>
                 <div className="bt-field">
-                  <label>Dureza (Shore)</label>
-                  <input type="number" value={data.dureza_shore} onChange={e => setField('dureza_shore', e.target.value)} />
-                </div>
-              </div>
-              <div className="bt-row">
-                <div className="bt-field">
                   <label>Espesor total (mm)</label>
                   <input type="number" step="0.01" value={data.espesor_total} onChange={e => setField('espesor_total', e.target.value)} />
-                </div>
-                <div className="bt-field">
-                  <label>Tracción / rigidez (N/mm)</label>
-                  <input value={data.traccion_rigidez} onChange={e => setField('traccion_rigidez', e.target.value)} />
                 </div>
               </div>
 
@@ -625,29 +562,13 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
                   <input type="number" value={data.distancia_centros} onChange={e => setField('distancia_centros', e.target.value)} />
                 </div>
                 <div className="bt-field">
-                  <label>Largo abierto, tensor relajado (mm)</label>
-                  <input type="number" value={data.largo_abierto_tensor} onChange={e => setField('largo_abierto_tensor', e.target.value)} />
-                </div>
-              </div>
-              <div className="bt-row">
-                <div className="bt-field">
                   <label>Espesor total (mm)</label>
                   <input type="number" step="0.01" value={data.espesor_total_dim} onChange={e => setField('espesor_total_dim', e.target.value)} />
                 </div>
-                <div className="bt-field">
-                  <label>Tolerancia de largo admitida (mm)</label>
-                  <input value={data.tolerancia_largo} onChange={e => setField('tolerancia_largo', e.target.value)} />
-                </div>
               </div>
-              <div className="bt-row">
-                <div className="bt-field">
-                  <label>Cantidad de bandas a fabricar</label>
-                  <input type="number" value={data.cantidad_bandas} onChange={e => setField('cantidad_bandas', e.target.value)} />
-                </div>
-                <div className="bt-field">
-                  <label>Unidades por juego (si aplica)</label>
-                  <input type="number" value={data.unidades_juego} onChange={e => setField('unidades_juego', e.target.value)} />
-                </div>
+              <div className="bt-field">
+                <label>Cantidad de bandas a fabricar</label>
+                <input type="number" value={data.cantidad_bandas} onChange={e => setField('cantidad_bandas', e.target.value)} />
               </div>
             </div>
           )}
@@ -659,25 +580,16 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
               <div className="bt-field">
                 <label>Tipo de empalme</label>
                 <div className="bt-radio-grid">
-                  {['Finger (dedos) vulcanizado', 'Escalonado (step) vulcanizado', 'Traslapo pegado (glued lap)', 'Sin fin de fábrica (endless)', 'Grapa / sujetador mecánico', 'Otro'].map(op => (
+                  {['Finger', 'Sobreposición', 'Sin fin de fábrica', 'Otro'].map(op => (
                     <label key={op} className="bt-radio">
                       <input type="radio" name="tipo_empalme" checked={data.tipo_empalme === op} onChange={() => setField('tipo_empalme', op)} />
                       {op}
                     </label>
                   ))}
                 </div>
-              </div>
-
-              <div className="bt-field">
-                <label>Método de unión</label>
-                <div className="bt-radio-grid">
-                  {['Prensa en caliente (vulcanizado)', 'Pegado en frío', 'Termosoldado', 'Grapado en sitio'].map(op => (
-                    <label key={op} className="bt-radio">
-                      <input type="radio" name="metodo_union" checked={data.metodo_union === op} onChange={() => setField('metodo_union', op)} />
-                      {op}
-                    </label>
-                  ))}
-                </div>
+                {data.tipo_empalme === 'Otro' && (
+                  <input placeholder="Especificar tipo de empalme" value={data.tipo_empalme_otro} onChange={e => setField('tipo_empalme_otro', e.target.value)} />
+                )}
               </div>
 
               <div className="bt-row">
@@ -688,21 +600,6 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
                 <div className="bt-field">
                   <label>Ángulo (°)</label>
                   <input type="number" value={data.angulo_empalme} onChange={e => setField('angulo_empalme', e.target.value)} />
-                </div>
-              </div>
-              <div className="bt-field">
-                <label>No. dedos / escalones</label>
-                <input type="number" value={data.num_dedos_escalones} onChange={e => setField('num_dedos_escalones', e.target.value)} />
-              </div>
-
-              <div className="bt-row">
-                <div className="bt-field">
-                  <label>Ubicación del empalme</label>
-                  <input value={data.ubicacion_empalme} onChange={e => setField('ubicacion_empalme', e.target.value)} />
-                </div>
-                <div className="bt-field">
-                  <label>Empalme a realizar</label>
-                  <input value={data.empalme_a_realizar} onChange={e => setField('empalme_a_realizar', e.target.value)} />
                 </div>
               </div>
 
@@ -734,57 +631,21 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
                       <input type="number" value={data.poleas[key].diametro_ext} onChange={e => setPoleaField(key, 'diametro_ext', e.target.value)} />
                     </div>
                     <div className="bt-field">
-                      <label>Ancho de cara (mm)</label>
-                      <input type="number" value={data.poleas[key].ancho_cara} onChange={e => setPoleaField(key, 'ancho_cara', e.target.value)} />
-                    </div>
-                  </div>
-                  <div className="bt-row">
-                    <div className="bt-field">
                       <label>Ø Eje (mm)</label>
                       <input type="number" value={data.poleas[key].diametro_eje} onChange={e => setPoleaField(key, 'diametro_eje', e.target.value)} />
                     </div>
-                    <div className="bt-field">
-                      <label>Largo de eje (mm)</label>
-                      <input type="number" value={data.poleas[key].largo_eje} onChange={e => setPoleaField(key, 'largo_eje', e.target.value)} />
-                    </div>
-                  </div>
-                  <div className="bt-field">
-                    <label>Buje / cuña / chavetero</label>
-                    <input value={data.poleas[key].buje_cuna} onChange={e => setPoleaField(key, 'buje_cuna', e.target.value)} />
-                  </div>
-                  <div className="bt-field">
-                    <label>Material / acabado / observaciones</label>
-                    <input value={data.poleas[key].material_obs} onChange={e => setPoleaField(key, 'material_obs', e.target.value)} />
                   </div>
                 </div>
               ))}
 
               <h3 className="bt-subtitle">Montaje</h3>
-              <div className="bt-row">
-                <div className="bt-field">
-                  <label>Ángulo de contacto motriz (°)</label>
-                  <input type="number" value={data.angulo_contacto_motriz} onChange={e => setField('angulo_contacto_motriz', e.target.value)} />
-                </div>
-                <div className="bt-field">
-                  <label>Montaje (horiz. / vert. / incl.)</label>
-                  <input value={data.montaje_orientacion} onChange={e => setField('montaje_orientacion', e.target.value)} />
-                </div>
+              <div className="bt-field">
+                <label>Montaje (horiz. / vert. / incl.)</label>
+                <input value={data.montaje_orientacion} onChange={e => setField('montaje_orientacion', e.target.value)} />
               </div>
               <div className="bt-field">
                 <label>Rango de ajuste del tensor (mm)</label>
                 <input value={data.rango_ajuste_tensor} onChange={e => setField('rango_ajuste_tensor', e.target.value)} />
-              </div>
-
-              <div className="bt-field">
-                <label>Tipo de polea</label>
-                <div className="bt-check-grid">
-                  {['Plana', 'Abombada (crown)', 'Con brida(s) lateral(es)', 'Recubierta (goma/PU)'].map(op => (
-                    <label key={op} className="bt-check">
-                      <input type="checkbox" checked={data.tipo_polea.includes(op)} onChange={() => toggleCheck('tipo_polea', op)} />
-                      {op}
-                    </label>
-                  ))}
-                </div>
               </div>
 
               <div className="bt-field">
@@ -853,28 +714,7 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
                 </div>
               </div>
 
-              <div className="bt-field">
-                <label>Evidencia recopilada</label>
-                <div className="bt-check-grid">
-                  {['Fotos', 'Muestra de banda', 'Foto de placa del motor', 'Video'].map(op => (
-                    <label key={op} className="bt-check">
-                      <input type="checkbox" checked={data.evidencia_recopilada.includes(op)} onChange={() => toggleCheck('evidencia_recopilada', op)} />
-                      {op}
-                    </label>
-                  ))}
-                </div>
-              </div>
 
-              <div className="bt-row">
-                <div className="bt-field">
-                  <label>Fecha requerida de entrega</label>
-                  <input type="date" value={data.fecha_requerida_entrega} onChange={e => setField('fecha_requerida_entrega', e.target.value)} />
-                </div>
-                <div className="bt-field">
-                  <label>No. de fotos tomadas</label>
-                  <input type="number" value={data.num_fotos_tomadas} onChange={e => setField('num_fotos_tomadas', e.target.value)} />
-                </div>
-              </div>
             </div>
           )}
 
@@ -970,8 +810,8 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
               <h3 className="bt-subtitle">Estado de Secciones</h3>
               <ul className="bt-estado-list">
                 <li className={data.empresa ? 'ok' : 'pend'}>{data.empresa ? '✅' : '⏳'} Datos del Cliente</li>
-                <li className={data.maquina_impulsada ? 'ok' : 'pend'}>{data.maquina_impulsada ? '✅' : '⏳'} Aplicación & Condiciones</li>
-                <li className={data.linea_habasit || data.construccion ? 'ok' : 'pend'}>{data.linea_habasit || data.construccion ? '✅' : '⏳'} Especificación de Banda</li>
+                <li className={data.potencia_motor ? 'ok' : 'pend'}>{data.potencia_motor ? '✅' : '⏳'} Aplicación & Condiciones</li>
+                <li className={data.linea_habasit ? 'ok' : 'pend'}>{data.linea_habasit ? '✅' : '⏳'} Especificación de Banda</li>
                 <li className={data.ancho_banda ? 'ok' : 'pend'}>{data.ancho_banda ? '✅' : '⏳'} Dimensiones</li>
                 <li className={data.tipo_empalme ? 'ok' : 'pend'}>{data.tipo_empalme ? '✅' : '⏳'} Empalme</li>
                 <li className={data.fotos.length > 0 ? 'ok' : 'pend'}>{data.fotos.length > 0 ? '✅' : '⏳'} Fotos y Videos ({data.fotos.length})</li>
@@ -988,7 +828,6 @@ export default function BandaTransmisionForm({ usuario, onBack, onLogout, onIrIn
               <h3 className="bt-subtitle">Banda a Fabricar</h3>
               <div className="bt-resumen-grid">
                 <span>Línea Habasit:</span><b>{data.linea_habasit || '—'}</b>
-                <span>Construcción:</span><b>{data.construccion || '—'}</b>
                 <span>Ancho:</span><b>{data.ancho_banda ? `${data.ancho_banda} mm` : '—'}</b>
                 <span>Perímetro:</span><b>{data.largo_total_perimetro ? `${data.largo_total_perimetro} mm` : '—'}</b>
                 <span>Empalme:</span><b>{data.tipo_empalme || '—'}</b>

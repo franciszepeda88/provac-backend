@@ -31,39 +31,40 @@ const SECTIONS_BY_TIPO = {
     },
     {
       title: 'Dimensiones',
-      fields: ['ancho_banda', 'espesor_total_dim', 'largo_circuito_cerrado', 'distancia_centros', 'largo_abierto', 'ancho_util', 'ancho_libre']
+      fields: ['ancho_banda', 'largo_circuito_cerrado', 'distancia_centros', 'largo_abierto', 'ancho_util', 'ancho_libre']
     },
     {
       title: 'Accesorios & Empalme',
       fields: ['tipo_empalme', 'metodo_union', 'largo_empalme', 'angulo_empalme', 'ubicacion_empalme', 'guia_tracking', 'posicion_guia', 'tacos', 'alto_tacos', 'paso_tacos']
     },
+    { title: 'Observaciones', fields: ['observaciones'] },
     { title: 'Firmas y Conformidad', fields: CAMPOS_FIRMAS }
   ],
   transmision: [
     { title: 'Datos del Cliente', fields: CAMPOS_CLIENTE },
     {
       title: 'Aplicación & Condiciones',
-      fields: ['maquina_impulsada', 'potencia_motor', 'rpm_motor', 'rpm_conducida', 'relacion_transmision', 'horas_operacion_dia', 'temp_trabajo', 'arranques_dia', 'tipo_carga', 'ambiente_contacto', 'motivo_cambio']
+      fields: ['potencia_motor', 'rpm_motor', 'horas_operacion_dia', 'temp_trabajo', 'ambiente_contacto', 'motivo_cambio']
     },
     {
       title: 'Especificación de Banda',
-      fields: ['linea_habasit', 'codigo_articulo', 'referencia_actual', 'marca_actual', 'construccion', 'material_nucleo', 'superficie_traccion', 'superficie_carga', 'color', 'dureza_shore', 'espesor_total', 'traccion_rigidez', 'certificaciones']
+      fields: ['linea_habasit', 'codigo_articulo', 'referencia_actual', 'marca_actual', 'material_nucleo', 'superficie_traccion', 'superficie_carga', 'color', 'espesor_total', 'certificaciones']
     },
     {
       title: 'Dimensiones de la Banda',
-      fields: ['ancho_banda', 'largo_total_perimetro', 'distancia_centros', 'largo_abierto_tensor', 'espesor_total_dim', 'tolerancia_largo', 'cantidad_bandas', 'unidades_juego']
+      fields: ['ancho_banda', 'largo_total_perimetro', 'distancia_centros', 'espesor_total_dim', 'cantidad_bandas']
     },
     {
       title: 'Empalme',
-      fields: ['tipo_empalme', 'metodo_union', 'largo_empalme', 'angulo_empalme', 'num_dedos_escalones', 'ubicacion_empalme', 'empalme_a_realizar', 'lugar_empalme']
+      fields: ['tipo_empalme', 'largo_empalme', 'angulo_empalme', 'lugar_empalme']
     },
     {
       title: 'Poleas, Ejes y Montaje',
-      fields: ['poleas', 'angulo_contacto_motriz', 'montaje_orientacion', 'rango_ajuste_tensor', 'tipo_polea', 'sistema_tensado', 'estado_poleas']
+      fields: ['poleas', 'montaje_orientacion', 'rango_ajuste_tensor', 'sistema_tensado', 'estado_poleas']
     },
     {
       title: 'Estado del Equipo',
-      fields: ['dano_banda_actual', 'acceso_instalar', 'instalacion_entrega', 'evidencia_recopilada', 'fecha_requerida_entrega', 'num_fotos_tomadas']
+      fields: ['dano_banda_actual', 'acceso_instalar', 'instalacion_entrega']
     },
     { title: 'Observaciones', fields: ['observaciones'] },
     { title: 'Firmas y Conformidad', fields: CAMPOS_FIRMAS }
@@ -71,24 +72,28 @@ const SECTIONS_BY_TIPO = {
   modular: [
     { title: 'Datos del Cliente', fields: CAMPOS_CLIENTE },
     {
-      title: 'Banda y Catarina (Sprocket)',
-      fields: ['serie_intralox', 'estilo', 'material', 'ancho_banda', 'largo_centro_centro', 'color', 'espesor', 'placas_transferencia', 'empujadores', 'altura_empujador', 'espaciado_empujadores', 'guardas_laterales', 'altura_guarda_lateral', 'ancho_cara_catarina', 'diametro_paso_catarina', 'barreno_diametro_interior', 'material_eje', 'material_eje_otro', 'diametro_cubo_buje', 'no_dientes_catarina']
+      title: 'Banda y Sprocket',
+      fields: ['serie_intralox', 'estilo', 'estilo_otro', 'material', 'material_otro', 'ancho_banda', 'largo_centro_centro', 'paso_banda', 'color', 'placas_transferencia', 'empujadores', 'tipo_empujador', 'altura_empujador', 'espaciado_empujadores', 'ancho_empujador', 'indentacion_empujadores', 'guardas_laterales', 'altura_guarda_lateral']
+    },
+    {
+      title: 'Sprocket',
+      fields: ['diametro_paso_catarina', 'no_dientes_catarina', 'material_eje', 'material_eje_otro', 'forma_eje', 'diametro_cubo_buje']
     },
     {
       title: 'Producto Transportado',
-      fields: ['tipo_producto', 'caracteristicas_producto', 'requisitos_regulatorios', 'descripcion_producto', 'ancho_producto', 'largo_producto', 'alto_producto', 'espaciado_productos', 'carga_total', 'carga_individual', 'temp_producto', 'velocidad_banda', 'metodo_carga']
+      fields: ['tipo_producto', 'tipo_producto_otro', 'caracteristicas_producto', 'requisitos_regulatorios', 'descripcion_producto', 'ancho_producto', 'largo_producto', 'alto_producto', 'espaciado_productos', 'carga_total', 'temp_producto', 'velocidad_banda']
     },
     {
       title: 'Datos de Aplicación',
-      fields: ['temp_operacion_motriz', 'ubicacion_motriz', 'construccion_retorno', 'condiciones_retorno', 'material_retorno', 'rodillo_snub', 'material_rodillo_snub', 'acumulacion_producto', 'pct_acumulacion', 'arranques_paros_frecuentes', 'cambio_elevacion', 'medida_inclinacion']
+      fields: ['temp_operacion_motriz', 'construccion_retorno', 'construccion_retorno_otro', 'condiciones_retorno', 'condiciones_retorno_otro', 'material_retorno', 'material_retorno_otro', 'cambio_elevacion', 'medida_inclinacion']
     },
     {
       title: 'Configuración del Sistema (Curvas)',
-      fields: ['material_riel_curvo', 'barra_frontal', 'material_barra_frontal', 'numero_curvas', 'longitud_tramo_recto_final', 'acumulacion_tramo_final', 'cambio_elevacion_tramo_final', 'curvas']
+      fields: ['material_riel_curvo', 'numero_curvas', 'longitud_tramo_recto_final', 'cambio_elevacion_tramo_final', 'curvas']
     },
     {
       title: 'Limpieza / Saneamiento',
-      fields: ['metodo_limpieza', 'frecuencia_limpieza', 'quimicos_limpieza', 'concentracion_quimica', 'temp_medio_limpieza', 'tiempo_exposicion']
+      fields: ['metodo_limpieza', 'frecuencia_limpieza', 'quimicos_limpieza', 'tiempo_exposicion']
     },
     { title: 'Observaciones y Anexos', fields: ['observaciones', 'documentacion_adjunta'] },
     { title: 'Firmas y Conformidad', fields: CAMPOS_FIRMAS }
@@ -97,27 +102,27 @@ const SECTIONS_BY_TIPO = {
     { title: 'Datos del Cliente', fields: CAMPOS_CLIENTE },
     {
       title: 'Tipo de Proceso / Equipo',
-      fields: ['tipo_proceso', 'tipo_proceso_otro', 'fuente_calor', 'marca_modelo_horno', 'temp_max_operacion', 'temp_prom_operacion', 'tiempo_residencia', 'zonas_temperatura']
+      fields: ['tipo_proceso', 'tipo_proceso_otro', 'marca_modelo_horno', 'temp_max_operacion', 'tiempo_residencia']
     },
     {
       title: 'Especificación de Banda',
-      fields: ['estilo_superficie', 'estilo_superficie_otro', 'color_material_superficial', 'color_material_otro', 'ancho_banda', 'largo_centro_centro', 'espesor_total', 'paso_banda', 'certificaciones']
+      fields: ['serie_intralox', 'serie_intralox_otro', 'estilo', 'estilo_otro', 'color_superficie', 'material_banda', 'material_banda_otro', 'ancho_banda', 'largo_centro_centro', 'espesor_total', 'paso_banda', 'certificaciones']
     },
     {
-      title: 'Catarina / Rueda y Eje',
-      fields: ['diametro_paso_catarina', 'no_dientes', 'barreno_diametro_interior', 'ancho_cara_catarina', 'material_catarina', 'material_catarina_otro', 'material_eje', 'material_eje_otro', 'diametro_eje', 'largo_eje_libre']
+      title: 'Sprocket / Rueda y Eje',
+      fields: ['diametro_ext_sprocket', 'no_dientes', 'diametro_int_sprocket', 'material_sprocket', 'material_sprocket_otro', 'material_eje', 'material_eje_otro', 'diametro_eje', 'largo_eje_libre']
     },
     {
       title: 'Producto Transportado',
-      fields: ['descripcion_producto', 'ancho_producto', 'largo_producto', 'alto_producto', 'espaciado_productos', 'carga_total', 'carga_individual', 'velocidad_banda', 'produccion_requerida', 'caracteristicas_producto', 'caracteristicas_producto_otro']
+      fields: ['descripcion_producto', 'ancho_producto', 'largo_producto', 'alto_producto', 'espaciado_productos', 'carga_total', 'velocidad_banda', 'caracteristicas_producto', 'caracteristicas_producto_otro']
     },
     {
       title: 'Configuración del Sistema',
-      fields: ['configuracion_recorrido', 'angulo_inclinacion', 'ubicacion_motriz', 'guardas_laterales', 'guardas_laterales_otro', 'altura_sidewall', 'espaciado_tacos', 'sistema_retorno', 'sistema_retorno_otro', 'tensado', 'tensado_otro']
+      fields: ['configuracion_recorrido', 'angulo_inclinacion', 'guardas_laterales', 'guardas_laterales_otro', 'altura_sidewall', 'empujadores', 'tipo_empujador', 'altura_empujador', 'ancho_empujador', 'sistema_retorno', 'sistema_retorno_otro', 'tensado', 'tensado_otro']
     },
     {
       title: 'Limpieza / Saneamiento',
-      fields: ['metodo_limpieza', 'frecuencia_limpieza', 'quimicos_limpieza', 'concentracion_quimica', 'temp_medio_limpieza', 'tiempo_exposicion']
+      fields: ['metodo_limpieza', 'frecuencia_limpieza', 'quimicos_limpieza', 'tiempo_exposicion']
     },
     { title: 'Observaciones y Anexos', fields: ['observaciones', 'documentacion_adjunta'] },
     { title: 'Firmas y Conformidad', fields: CAMPOS_FIRMAS }

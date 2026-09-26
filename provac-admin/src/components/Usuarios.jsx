@@ -24,6 +24,13 @@ export default function Usuarios() {
   const [resetPassword, setResetPassword] = useState('');
   const [resetGuardando, setResetGuardando] = useState(false);
 
+  const [editUserId, setEditUserId] = useState(null);
+  const [editNombre, setEditNombre] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editRol, setEditRol] = useState('technician');
+  const [editGuardando, setEditGuardando] = useState(false);
+  const [editMensaje, setEditMensaje] = useState('');
+
   useEffect(() => {
     cargarUsuarios();
   }, []);
@@ -124,6 +131,47 @@ export default function Usuarios() {
     }
   };
 
+  const abrirEditar = (u) => {
+    setEditUserId(u.id);
+    setEditNombre(u.nombre || '');
+    setEditEmail(u.email || '');
+    setEditRol(u.rol || 'technician');
+    setEditMensaje('');
+  };
+
+  const guardarEdicion = async (e) => {
+    e.preventDefault();
+    setEditMensaje('');
+    if (!editNombre || !editEmail) {
+      setEditMensaje('⚠️ Completa nombre y correo');
+      return;
+    }
+    setEditGuardando(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/usuarios/${editUserId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ nombre: editNombre, email: editEmail, rol: editRol })
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setEditMensaje('❌ ' + (result.error || 'No se pudo actualizar el usuario'));
+        setEditGuardando(false);
+        return;
+      }
+      setEditUserId(null);
+      cargarUsuarios();
+    } catch (err) {
+      setEditMensaje('❌ Error de conexión: ' + err.message);
+    } finally {
+      setEditGuardando(false);
+    }
+  };
+
   return (
     <div className="usr-container">
       <div className="usr-header">
@@ -201,6 +249,13 @@ export default function Usuarios() {
                   <td>
                     <button
                       type="button"
+                      className="usr-btn-editar"
+                      onClick={() => abrirEditar(u)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
                       className={u.reset_solicitado_en ? 'usr-btn-reset usr-btn-reset-urgente' : 'usr-btn-reset'}
                       onClick={() => { setResetUserId(u.id); setResetPassword(''); }}
                     >
@@ -237,6 +292,48 @@ export default function Usuarios() {
                 <button type="button" className="usr-btn-cancelar" onClick={() => setResetUserId(null)}>Cancelar</button>
                 <button type="submit" className="usr-btn-guardar" disabled={resetGuardando}>
                   {resetGuardando ? 'Guardando...' : 'Actualizar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {editUserId && (
+        <div className="usr-modal-overlay" onClick={() => setEditUserId(null)}>
+          <div className="usr-modal" onClick={e => e.stopPropagation()}>
+            <h3>Editar usuario</h3>
+            {editMensaje && <div className="usr-mensaje">{editMensaje}</div>}
+            <form onSubmit={guardarEdicion}>
+              <div className="usr-field">
+                <label>Nombre completo</label>
+                <input
+                  autoFocus
+                  value={editNombre}
+                  onChange={e => setEditNombre(e.target.value)}
+                  placeholder="Nombre del técnico o admin"
+                />
+              </div>
+              <div className="usr-field">
+                <label>Correo electrónico</label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={e => setEditEmail(e.target.value)}
+                  placeholder="correo@empresa.com"
+                />
+              </div>
+              <div className="usr-field">
+                <label>Rol</label>
+                <select value={editRol} onChange={e => setEditRol(e.target.value)}>
+                  <option value="technician">Técnico</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+              <div className="usr-modal-actions">
+                <button type="button" className="usr-btn-cancelar" onClick={() => setEditUserId(null)}>Cancelar</button>
+                <button type="submit" className="usr-btn-guardar" disabled={editGuardando}>
+                  {editGuardando ? 'Guardando...' : 'Guardar cambios'}
                 </button>
               </div>
             </form>

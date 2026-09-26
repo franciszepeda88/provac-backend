@@ -173,6 +173,23 @@
   color: #2E7D32;
 }
 
+.usr-btn-editar {
+  background: transparent;
+  border: 1px solid #2E7D32;
+  color: #2E7D32;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-right: 6px;
+}
+
+.usr-btn-editar:hover {
+  background: #EDF7ED;
+}
+
 .usr-btn-reset {
   background: transparent;
   border: 1px solid #0D4C92;

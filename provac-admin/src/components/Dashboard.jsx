@@ -76,6 +76,19 @@ export default function Dashboard({ onEditar }) {
     });
   }, [busqueda, filtroTipo, filtroEstado, levantamientos]);
 
+  // Varias bandas pueden compartir el mismo folio (un levantamiento con
+  // varias bandas registrado desde la app técnico). Se agrupan para que la
+  // tabla las muestre juntas, con el folio y el cliente en una sola celda.
+  const gruposPorFolio = useMemo(() => {
+    const mapa = new Map();
+    filtrados.forEach((lev) => {
+      const key = lev.folio && lev.folio.trim() ? lev.folio : `sin-folio-${lev.id}`;
+      if (!mapa.has(key)) mapa.set(key, []);
+      mapa.get(key).push(lev);
+    });
+    return Array.from(mapa.values());
+  }, [filtrados]);
+
   const formatearFecha = (fecha) => new Date(fecha).toLocaleDateString('es-HN');
 
   // La lista no trae fotos ni firmas (para que cargue rápido con TODOS los levantamientos
@@ -148,22 +161,24 @@ export default function Dashboard({ onEditar }) {
           </thead>
           <tbody>
             {filtrados.length > 0 ? (
-              filtrados.map((lev) => (
-                <tr key={lev.id}>
-                  <td>{lev.folio || '—'}</td>
-                  <td>{lev.cliente_nombre}</td>
-                  <td>{TIPO_LABELS[lev.tipo_banda] || lev.tipo_banda || '—'}</td>
-                  <td>
-                    <span className={`badge badge-${lev.estado}`}>{lev.estado || 'completo'}</span>
-                  </td>
-                  <td>{formatearFecha(lev.created_at)}</td>
-                  <td className="acciones">
-                    <button className="btn-ver" onClick={() => abrirDetalle(lev)} disabled={cargandoDetalle === lev.id}>
-                      {cargandoDetalle === lev.id ? 'Cargando...' : 'Ver'}
-                    </button>
-                    <button className="btn-eliminar" onClick={() => eliminarLevantamiento(lev.id)}>Eliminar</button>
-                  </td>
-                </tr>
+              gruposPorFolio.map((grupo) => (
+                grupo.map((lev, idx) => (
+                  <tr key={lev.id} className={grupo.length > 1 ? 'fila-multibanda' : undefined}>
+                    {idx === 0 && <td rowSpan={grupo.length}>{lev.folio || '—'}{grupo.length > 1 && <span className="badge-multibanda">{grupo.length} bandas</span>}</td>}
+                    {idx === 0 && <td rowSpan={grupo.length}>{lev.cliente_nombre}</td>}
+                    <td>{TIPO_LABELS[lev.tipo_banda] || lev.tipo_banda || '—'}</td>
+                    <td>
+                      <span className={`badge badge-${lev.estado}`}>{lev.estado || 'completo'}</span>
+                    </td>
+                    <td>{formatearFecha(lev.created_at)}</td>
+                    <td className="acciones">
+                      <button className="btn-ver" onClick={() => abrirDetalle(lev)} disabled={cargandoDetalle === lev.id}>
+                        {cargandoDetalle === lev.id ? 'Cargando...' : 'Ver'}
+                      </button>
+                      <button className="btn-eliminar" onClick={() => eliminarLevantamiento(lev.id)}>Eliminar</button>
+                    </td>
+                  </tr>
+                ))
               ))
             ) : (
               <tr>

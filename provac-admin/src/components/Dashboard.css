@@ -182,3 +182,19 @@ table tbody tr:hover {
     width: 100%;
   }
 }
+
+.fila-multibanda td {
+  border-bottom: 1px solid #E3F2FD;
+}
+
+.badge-multibanda {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #0D4C92;
+  background: #E3F2FD;
+  padding: 2px 8px;
+  border-radius: 20px;
+  vertical-align: middle;
+}
