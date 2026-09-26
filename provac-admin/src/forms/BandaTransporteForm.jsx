@@ -161,8 +161,14 @@ export default function BandaTransporteForm({ usuario, onBack, onLogout, onIrIni
     setData(prev => ({ ...prev, fotos: prev.fotos.filter((_, i) => i !== idx) }));
   };
 
-  const next = () => setStep(s => Math.min(s + 1, TOTAL_PASOS));
-  const prev = () => setStep(s => Math.max(s - 1, 1));
+  const next = () => {
+    setStep(s => Math.min(s + 1, TOTAL_PASOS));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+  const prev = () => {
+    setStep(s => Math.max(s - 1, 1));
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
 
   const buildPayload = (estado) => {
     const {
