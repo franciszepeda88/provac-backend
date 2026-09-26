@@ -13,6 +13,7 @@ const TIPO_LABELS = {
 
 export default function Dashboard({ onEditar }) {
   const [levantamientos, setLevantamientos] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroEstado, setFiltroEstado] = useState('todos');
@@ -23,6 +24,7 @@ export default function Dashboard({ onEditar }) {
 
   useEffect(() => {
     cargarLevantamientos();
+    cargarUsuarios();
   }, []);
 
   const cargarLevantamientos = async () => {
@@ -39,6 +41,20 @@ export default function Dashboard({ onEditar }) {
     } catch (err) {
       setError('Error al cargar los datos');
       setLoading(false);
+    }
+  };
+
+  const cargarUsuarios = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/usuarios`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!response.ok) return;
+      const data = await response.json();
+      setUsuarios(Array.isArray(data.usuarios) ? data.usuarios : []);
+    } catch (err) {
+      // Si falla, la columna de técnico simplemente queda en blanco.
     }
   };
 
@@ -88,6 +104,12 @@ export default function Dashboard({ onEditar }) {
     });
     return Array.from(mapa.values());
   }, [filtrados]);
+
+  const mapaUsuarios = useMemo(() => {
+    const mapa = {};
+    usuarios.forEach(u => { mapa[u.id] = u.nombre || u.email; });
+    return mapa;
+  }, [usuarios]);
 
   const formatearFecha = (fecha) => new Date(fecha).toLocaleDateString('es-HN');
 
@@ -156,6 +178,7 @@ export default function Dashboard({ onEditar }) {
               <th>Tipo de Banda</th>
               <th>Estado</th>
               <th>Fecha</th>
+              <th>Técnico</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -171,6 +194,7 @@ export default function Dashboard({ onEditar }) {
                       <span className={`badge badge-${lev.estado}`}>{lev.estado || 'completo'}</span>
                     </td>
                     <td>{formatearFecha(lev.created_at)}</td>
+                    <td>{mapaUsuarios[lev.user_id] || '—'}</td>
                     <td className="acciones">
                       <button className="btn-ver" onClick={() => abrirDetalle(lev)} disabled={cargandoDetalle === lev.id}>
                         {cargandoDetalle === lev.id ? 'Cargando...' : 'Ver'}
@@ -182,7 +206,7 @@ export default function Dashboard({ onEditar }) {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="no-data">No hay levantamientos</td>
+                <td colSpan="7" className="no-data">No hay levantamientos</td>
               </tr>
             )}
           </tbody>

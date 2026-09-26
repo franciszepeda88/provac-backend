@@ -1,4 +1,4 @@
-const CACHE_NAME = 'provac-admin-v15';
+const CACHE_NAME = 'provac-admin-v16';
 const urlsToCache = [
   '/',
   '/index.html',
