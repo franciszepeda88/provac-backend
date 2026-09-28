@@ -11,6 +11,150 @@ export const TIPO_LABELS = {
 
 const humanize = (key) => key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
+const LABELS_BY_TIPO = {
+  transporte: {
+    fecha: 'Fecha', entrada: 'Hora entrada', salida: 'Hora salida', planta: 'Planta / Sucursal',
+    contacto: 'Contacto', puesto: 'Puesto', telefono: 'Teléfono', email: 'Email',
+    area_linea: 'Área / Línea', equipo_tag: 'Equipo / Tag', tecnico_provac: 'Técnico PROVAC', vendedor: 'Vendedor',
+    referencia_banda: 'Referencia de la Banda',
+    industria: 'Industria', producto_transportador: 'Producto Transportado', carga_kgm: 'Carga (kg/m)',
+    velocidad_mmin: 'Velocidad (m/min)', inclinacion: 'Inclinación (°)', temperatura_operacion: 'Temperatura (°C)',
+    horas_dia: 'Horas/día', turnos_dia: 'Turnos/día', ambiente: 'Ambiente', contacto_producto: 'Contacto con Producto',
+    contacto_producto_otro: 'Especificar otro contacto con producto',
+    marca_linea: 'Marca / Línea', referencia_actual: 'Referencia Actual', material_base: 'Material Base',
+    num_capas: 'No. Capas/Telas', espesor_total: 'Espesor total (mm)', color: 'Color', dureza_shore: 'Dureza Shore A',
+    cubierta_superior: 'Cubierta Superior', cubierta_superior_otro: 'Especificar cubierta superior',
+    cubierta_inferior: 'Cubierta Inferior', cubierta_inferior_otro: 'Especificar cubierta inferior',
+    ancho_banda: 'Ancho de banda (mm)', largo_circuito_cerrado: 'Largo total de circuito cerrado (mm)',
+    distancia_centros: 'Distancia entre centros (mm)', largo_abierto: 'Largo abierto (mm)',
+    ancho_util: 'Ancho útil (mm)', ancho_libre: 'Ancho libre (mm)',
+    tipo_empalme: 'Tipo de Empalme', tipo_empalme_otro: 'Especificar tipo de empalme',
+    metodo_union: 'Método de unión', modelo_empalme_mecanico: 'Modelo de empalme mecánico a usar',
+    largo_empalme: 'Largo empalme (mm)', angulo_empalme: 'Ángulo (°)', ubicacion_empalme: 'Ubicación del empalme',
+    guia_tracking: 'Tipo de guía', guia_especificaciones: 'Especificaciones y medidas de la guía',
+    guia_indentacion: 'Indentación de la guía', posicion_guia: 'Posición',
+    tacos: 'Tipo de Empujador', alto_tacos: 'Alto Empujador (mm)', paso_tacos: 'Distancia entre Empujadores (mm)',
+    observaciones: 'Notas adicionales, riesgos, condiciones especiales, datos que falten por confirmar',
+    tecnico_nombre: 'Nombre', tecnico_puesto: 'Puesto', fecha_firma: 'Fecha',
+    cliente_nombre_firma: 'Nombre', cliente_puesto: 'Puesto / Cargo'
+  },
+  transmision: {
+    fecha: 'Fecha', entrada: 'Hora entrada', salida: 'Hora salida', planta: 'Planta / Sucursal',
+    contacto: 'Contacto', puesto: 'Puesto', telefono: 'Teléfono', email: 'Email',
+    area_linea: 'Área / Línea', equipo_tag: 'Equipo / Tag', tecnico_provac: 'Técnico PROVAC', vendedor: 'Vendedor',
+    referencia_banda: 'Referencia de la Banda',
+    potencia_motor: 'Potencia del motor (kW / HP)', rpm_motor: 'RPM motor',
+    horas_operacion_dia: 'Horas de operación / día', temp_trabajo: 'Temp. de trabajo (°C)',
+    ambiente_contacto: 'Ambiente / contacto', ambiente_contacto_otro: 'Especificar otro ambiente / contacto',
+    motivo_cambio: 'Motivo del cambio',
+    linea_habasit: 'Línea Familia', codigo_articulo: 'Código de artículo / referencia',
+    referencia_actual: 'Referencia banda actual', marca_actual: 'Marca banda actual',
+    material_nucleo: 'Material del núcleo', material_nucleo_otro: 'Especificar material del núcleo',
+    superficie_traccion: 'Superficie de tracción (lado polea)', superficie_traccion_otro: 'Especificar superficie de tracción',
+    superficie_carga: 'Superficie de carga (lado producto)', superficie_carga_otro: 'Especificar superficie de carga',
+    color: 'Color', espesor_total: 'Espesor total (mm)', certificaciones: 'Certificaciones requeridas',
+    ancho_banda: 'Ancho de banda (mm)', largo_total_perimetro: 'Largo total / perímetro (mm)',
+    distancia_centros: 'Distancia entre centros (mm)', espesor_total_dim: 'Espesor total (mm)',
+    cantidad_bandas: 'Cantidad de bandas a fabricar',
+    tipo_empalme: 'Tipo de empalme', tipo_empalme_otro: 'Especificar tipo de empalme',
+    largo_empalme: 'Largo del empalme (mm)', angulo_empalme: 'Ángulo (°)', lugar_empalme: 'Lugar del empalme',
+    poleas: 'Poleas', montaje_orientacion: 'Montaje (horiz. / vert. / incl.)',
+    rango_ajuste_tensor: 'Rango de ajuste del tensor (mm)', sistema_tensado: 'Sistema de tensado',
+    estado_poleas: 'Estado de poleas', dano_banda_actual: 'Daño en banda actual',
+    acceso_instalar: 'Acceso para instalar', instalacion_entrega: 'Instalación / entrega',
+    observaciones: 'Notas adicionales, riesgos, condiciones especiales, datos que falten por confirmar',
+    tecnico_nombre: 'Nombre', tecnico_puesto: 'Puesto', fecha_firma: 'Fecha',
+    cliente_nombre_firma: 'Nombre', cliente_puesto: 'Puesto / Cargo'
+  },
+  modular: {
+    fecha: 'Fecha', entrada: 'Hora entrada', salida: 'Hora salida', planta: 'Planta / Sucursal',
+    contacto: 'Contacto', puesto: 'Puesto', telefono: 'Teléfono', email: 'Email',
+    area_linea: 'Área / Línea', equipo_tag: 'Equipo / Tag', tecnico_provac: 'Técnico PROVAC', vendedor: 'Vendedor',
+    serie_intralox: 'Serie Intralox', estilo: 'Estilo', estilo_otro: 'Especificar estilo',
+    material: 'Material', material_otro: 'Especificar material',
+    ancho_banda: 'Ancho de banda (mm)', largo_centro_centro: 'Largo centro a centro (m)',
+    paso_banda: 'Paso de la banda (mm)', color: 'Color',
+    placas_transferencia: 'Placas de transferencia (finger plates)', empujadores: 'Empujadores (pushers)',
+    tipo_empujador: 'Tipo de Empujador', altura_empujador: 'Altura de empujador (mm)',
+    espaciado_empujadores: 'Distancia entre empujadores (mm)', ancho_empujador: 'Ancho de Empujador (mm)',
+    indentacion_empujadores: 'Indentación de Empujadores (mm)',
+    guardas_laterales: 'Guardas laterales (side guards)', altura_guarda_lateral: 'Altura de guarda lateral (mm)',
+    diametro_paso_catarina: 'Diámetro ext de Sprocket (mm)', no_dientes_catarina: 'No. de dientes de Sprocket',
+    material_eje: 'Material del eje', material_eje_otro: 'Especificar material del eje',
+    forma_eje: 'Forma de Eje', diametro_cubo_buje: 'Diámetro/Medida de Eje (mm)',
+    tipo_producto: 'Tipo de producto', tipo_producto_otro: 'Especificar tipo de producto',
+    caracteristicas_producto: 'Características del producto', requisitos_regulatorios: 'Requisitos regulatorios',
+    descripcion_producto: 'Descripción del producto', ancho_producto: 'Ancho de producto (mm)',
+    largo_producto: 'Largo (mm)', alto_producto: 'Alto (mm)', espaciado_productos: 'Espaciado entre productos (mm)',
+    carga_total: 'Carga total (kg o kg/m²)', temp_producto: 'Temperatura del producto (°C)',
+    velocidad_banda: 'Velocidad de banda (m/min)',
+    referencia_banda: 'Referencia de la Banda',
+    temp_operacion_motriz: 'Temperatura de Operación (°C)', construccion_retorno: 'Construcción del retorno',
+    construccion_retorno_otro: 'Especificar construcción del retorno', condiciones_retorno: 'Condiciones del retorno',
+    condiciones_retorno_otro: 'Especificar condiciones del retorno', material_retorno: 'Material del retorno',
+    material_retorno_otro: 'Especificar material del retorno', cambio_elevacion: 'Cambio de elevación',
+    medida_inclinacion: 'Medida de inclinación / declinación (m o °)',
+    material_riel_curvo: 'Material del riel curvo (curved rail)', numero_curvas: 'Número de curvas',
+    longitud_tramo_recto_final: 'Longitud de tramo recto final (m)',
+    cambio_elevacion_tramo_final: 'Cambio de elevación en tramo final', curvas: 'Curvas',
+    metodo_limpieza: 'Método de limpieza', frecuencia_limpieza: 'Frecuencia de limpieza',
+    quimicos_limpieza: 'Químicos de limpieza usados', tiempo_exposicion: 'Tiempo de exposición de la banda',
+    observaciones: 'Problemas o fallas reportadas en la banda o el sistema actual, y notas adicionales',
+    documentacion_adjunta: 'Documentación adjunta',
+    tecnico_nombre: 'Nombre', tecnico_puesto: 'Puesto', fecha_firma: 'Fecha',
+    cliente_nombre_firma: 'Nombre', cliente_puesto: 'Puesto / Cargo'
+  },
+  thermodrive: {
+    fecha: 'Fecha', entrada: 'Hora entrada', salida: 'Hora salida', planta: 'Planta / Sucursal',
+    contacto: 'Contacto', puesto: 'Puesto', telefono: 'Teléfono', email: 'Email',
+    area_linea: 'Área / Línea', equipo_tag: 'Equipo / Tag', tecnico_provac: 'Técnico PROVAC', vendedor: 'Vendedor',
+    referencia_banda: 'Referencia de la Banda',
+    tipo_proceso: 'Tipo de proceso', tipo_proceso_otro: 'Especificar tipo de proceso',
+    marca_modelo_horno: 'Marca / Modelo del equipo', temp_max_operacion: 'Temperatura máxima de operación (°C)',
+    tiempo_residencia: 'Tiempo de residencia en el equipo (min)',
+    serie_intralox: 'Serie Intralox', serie_intralox_otro: 'Especificar serie Intralox',
+    estilo: 'Estilo', estilo_otro: 'Especificar estilo', color_superficie: 'Color de superficie',
+    material_banda: 'Material de la banda', material_banda_otro: 'Especificar material de la banda',
+    ancho_banda: 'Ancho de banda (mm)', largo_centro_centro: 'Largo centro a centro (m)',
+    espesor_total: 'Espesor total (mm)', paso_banda: 'Paso de banda (pitch, mm)',
+    certificaciones: 'Certificaciones requeridas',
+    diametro_ext_sprocket: 'Diámetro Ext Sprocket (mm)', no_dientes: 'No. de dientes',
+    diametro_int_sprocket: 'Diámetro Int Sprocket (mm)', material_sprocket: 'Material de Sprocket',
+    material_sprocket_otro: 'Especificar material de Sprocket', material_eje: 'Material del eje',
+    material_eje_otro: 'Especificar material del eje', diametro_eje: 'Diámetro de eje (mm)',
+    largo_eje_libre: 'Largo de eje libre (mm)',
+    descripcion_producto: 'Descripción del producto', ancho_producto: 'Ancho de producto (mm)',
+    largo_producto: 'Largo (mm)', alto_producto: 'Alto (mm)', espaciado_productos: 'Espaciado entre productos (mm)',
+    carga_total: 'Carga total (kg o kg/m²)', velocidad_banda: 'Velocidad de banda (m/min)',
+    caracteristicas_producto: 'Características del producto', caracteristicas_producto_otro: 'Especificar características del producto',
+    configuracion_recorrido: 'Configuración del recorrido', angulo_inclinacion: 'Ángulo de inclinación / declinación (°)',
+    guardas_laterales: 'Guardas / paredes laterales', guardas_laterales_otro: 'Especificar guardas / paredes laterales',
+    altura_sidewall: 'Altura de sidewall / guarda (mm)', empujadores: 'Empujadores',
+    tipo_empujador: 'Tipo de Empujador', altura_empujador: 'Alto de Empujador (mm)', ancho_empujador: 'Ancho de Empujador (mm)',
+    sistema_retorno: 'Sistema de retorno', sistema_retorno_otro: 'Especificar sistema de retorno',
+    tensado: 'Tensado', tensado_otro: 'Especificar tensado',
+    metodo_limpieza: 'Método de limpieza', frecuencia_limpieza: 'Frecuencia de limpieza',
+    quimicos_limpieza: 'Químicos de limpieza usados', tiempo_exposicion: 'Tiempo de exposición de la banda',
+    observaciones: 'Problemas o fallas reportadas en la banda o el sistema actual (quemado, estiramiento, ruido, desalineación), y notas adicionales',
+    documentacion_adjunta: 'Documentación adjunta',
+    tecnico_nombre: 'Nombre', tecnico_puesto: 'Puesto', fecha_firma: 'Fecha',
+    cliente_nombre_firma: 'Nombre', cliente_puesto: 'Puesto / Cargo'
+  }
+};
+
+// Devuelve la etiqueta exacta usada en el formulario para un campo, según el tipo de banda.
+// Si no se encuentra (campo nuevo aun no mapeado), cae de vuelta a humanizar el nombre interno.
+const labelFor = (tipo, key) => (LABELS_BY_TIPO[tipo] && LABELS_BY_TIPO[tipo][key]) || humanize(key);
+
+// Para el Excel de LISTA (varias bandas de distintos tipos en una sola tabla), se usa la
+// primera etiqueta encontrada entre los 4 tipos para esa columna.
+const bestLabel = (key) => {
+  for (const tipo of Object.keys(LABELS_BY_TIPO)) {
+    if (LABELS_BY_TIPO[tipo][key]) return LABELS_BY_TIPO[tipo][key];
+  }
+  return humanize(key);
+};
+
 // Campos de "Datos del Cliente" — idénticos en los 4 tipos de banda (estandarizado).
 const CAMPOS_CLIENTE = ['fecha', 'entrada', 'salida', 'planta', 'contacto', 'puesto', 'telefono', 'email', 'area_linea', 'equipo_tag', 'tecnico_provac', 'vendedor'];
 const CAMPOS_FIRMAS = ['tecnico_nombre', 'tecnico_puesto', 'fecha_firma', 'cliente_nombre_firma', 'cliente_puesto'];
@@ -23,11 +167,11 @@ const SECTIONS_BY_TIPO = {
     { title: 'Datos del Cliente', fields: CAMPOS_CLIENTE },
     {
       title: 'Aplicación & Condiciones',
-      fields: ['industria', 'producto_transportador', 'carga_kgm', 'velocidad_mmin', 'inclinacion', 'temperatura_operacion', 'horas_dia', 'turnos_dia', 'ambiente', 'contacto_producto']
+      fields: ['referencia_banda', 'industria', 'producto_transportador', 'carga_kgm', 'velocidad_mmin', 'inclinacion', 'temperatura_operacion', 'horas_dia', 'turnos_dia', 'ambiente', 'contacto_producto', 'contacto_producto_otro']
     },
     {
       title: 'Especificaciones de Banda',
-      fields: ['marca_linea', 'referencia_actual', 'material_base', 'num_capas', 'espesor_total', 'color', 'dureza_shore', 'cubierta_superior', 'cubierta_inferior']
+      fields: ['marca_linea', 'referencia_actual', 'material_base', 'num_capas', 'espesor_total', 'color', 'dureza_shore', 'cubierta_superior', 'cubierta_superior_otro', 'cubierta_inferior', 'cubierta_inferior_otro']
     },
     {
       title: 'Dimensiones',
@@ -35,7 +179,7 @@ const SECTIONS_BY_TIPO = {
     },
     {
       title: 'Accesorios & Empalme',
-      fields: ['tipo_empalme', 'metodo_union', 'largo_empalme', 'angulo_empalme', 'ubicacion_empalme', 'guia_tracking', 'posicion_guia', 'tacos', 'alto_tacos', 'paso_tacos']
+      fields: ['tipo_empalme', 'tipo_empalme_otro', 'metodo_union', 'modelo_empalme_mecanico', 'largo_empalme', 'angulo_empalme', 'ubicacion_empalme', 'guia_tracking', 'guia_especificaciones', 'guia_indentacion', 'posicion_guia', 'tacos', 'alto_tacos', 'paso_tacos']
     },
     { title: 'Observaciones', fields: ['observaciones'] },
     { title: 'Firmas y Conformidad', fields: CAMPOS_FIRMAS }
@@ -44,11 +188,11 @@ const SECTIONS_BY_TIPO = {
     { title: 'Datos del Cliente', fields: CAMPOS_CLIENTE },
     {
       title: 'Aplicación & Condiciones',
-      fields: ['potencia_motor', 'rpm_motor', 'horas_operacion_dia', 'temp_trabajo', 'ambiente_contacto', 'motivo_cambio']
+      fields: ['referencia_banda', 'potencia_motor', 'rpm_motor', 'horas_operacion_dia', 'temp_trabajo', 'ambiente_contacto', 'ambiente_contacto_otro', 'motivo_cambio']
     },
     {
       title: 'Especificación de Banda',
-      fields: ['linea_habasit', 'codigo_articulo', 'referencia_actual', 'marca_actual', 'material_nucleo', 'superficie_traccion', 'superficie_carga', 'color', 'espesor_total', 'certificaciones']
+      fields: ['linea_habasit', 'codigo_articulo', 'referencia_actual', 'marca_actual', 'material_nucleo', 'material_nucleo_otro', 'superficie_traccion', 'superficie_traccion_otro', 'superficie_carga', 'superficie_carga_otro', 'color', 'espesor_total', 'certificaciones']
     },
     {
       title: 'Dimensiones de la Banda',
@@ -56,7 +200,7 @@ const SECTIONS_BY_TIPO = {
     },
     {
       title: 'Empalme',
-      fields: ['tipo_empalme', 'largo_empalme', 'angulo_empalme', 'lugar_empalme']
+      fields: ['tipo_empalme', 'tipo_empalme_otro', 'largo_empalme', 'angulo_empalme', 'lugar_empalme']
     },
     {
       title: 'Poleas, Ejes y Montaje',
@@ -85,7 +229,7 @@ const SECTIONS_BY_TIPO = {
     },
     {
       title: 'Datos de Aplicación',
-      fields: ['temp_operacion_motriz', 'construccion_retorno', 'construccion_retorno_otro', 'condiciones_retorno', 'condiciones_retorno_otro', 'material_retorno', 'material_retorno_otro', 'cambio_elevacion', 'medida_inclinacion']
+      fields: ['referencia_banda', 'temp_operacion_motriz', 'construccion_retorno', 'construccion_retorno_otro', 'condiciones_retorno', 'condiciones_retorno_otro', 'material_retorno', 'material_retorno_otro', 'cambio_elevacion', 'medida_inclinacion']
     },
     {
       title: 'Configuración del Sistema (Curvas)',
@@ -102,7 +246,7 @@ const SECTIONS_BY_TIPO = {
     { title: 'Datos del Cliente', fields: CAMPOS_CLIENTE },
     {
       title: 'Tipo de Proceso / Equipo',
-      fields: ['tipo_proceso', 'tipo_proceso_otro', 'marca_modelo_horno', 'temp_max_operacion', 'tiempo_residencia']
+      fields: ['referencia_banda', 'tipo_proceso', 'tipo_proceso_otro', 'marca_modelo_horno', 'temp_max_operacion', 'tiempo_residencia']
     },
     {
       title: 'Especificación de Banda',
@@ -215,7 +359,7 @@ export async function exportListToExcel(levantamientos, filename = 'levantamient
     });
   });
 
-  const headers = [...baseCols, ...datosKeys.map(humanize)];
+  const headers = [...baseCols, ...datosKeys.map(bestLabel)];
   const totalCols = headers.length;
 
   ws.mergeCells(1, 1, 1, totalCols);
@@ -324,7 +468,7 @@ export async function exportDetailToExcel(lev) {
     addSeccion(title);
     filas.forEach(k => {
       usados.add(k);
-      addCampo(humanize(k), formatValor(datos[k]));
+      addCampo(labelFor(lev.tipo_banda, k), formatValor(datos[k]));
     });
     ws.addRow([]);
   });
@@ -332,7 +476,7 @@ export async function exportDetailToExcel(lev) {
   const restoKeys = Object.keys(datos).filter(k => !usados.has(k) && k !== 'subtipo' && tieneValor(datos[k]));
   if (restoKeys.length > 0) {
     addSeccion('Otros Datos');
-    restoKeys.forEach(k => addCampo(humanize(k), formatValor(datos[k])));
+    restoKeys.forEach(k => addCampo(labelFor(lev.tipo_banda, k), formatValor(datos[k])));
     ws.addRow([]);
   }
 
@@ -445,14 +589,14 @@ export function exportDetailToPDF(lev) {
       .filter(k => tieneValor(datos[k]))
       .map(k => {
         usados.add(k);
-        return [humanize(k), formatValor(datos[k])];
+        return [labelFor(lev.tipo_banda, k), formatValor(datos[k])];
       });
     dibujarSeccion(title, rows);
   });
 
   const restoRows = Object.entries(datos)
     .filter(([k, v]) => !usados.has(k) && k !== 'subtipo' && tieneValor(v))
-    .map(([k, v]) => [humanize(k), formatValor(v)]);
+    .map(([k, v]) => [labelFor(lev.tipo_banda, k), formatValor(v)]);
   dibujarSeccion('Otros Datos', restoRows);
 
   if (y > pageHeight - 50) {
@@ -471,13 +615,52 @@ export function exportDetailToPDF(lev) {
     doc.setFontSize(9);
     doc.setTextColor(60, 60, 60);
     doc.text('Firma Técnico:', 14, y);
-    try { doc.addImage(lev.firma_tecnico, 'PNG', 14, y + 3, 55, 28); } catch (e) { /* ignore */ }
+    try { doc.addImage(lev.firma_tecnico, extraerExtension(lev.firma_tecnico).toUpperCase(), 14, y + 3, 55, 28); } catch (e) { /* ignore */ }
   }
   if (lev.firma_cliente) {
     doc.setFontSize(9);
     doc.setTextColor(60, 60, 60);
     doc.text('Firma Cliente:', 85, y);
-    try { doc.addImage(lev.firma_cliente, 'PNG', 85, y + 3, 55, 28); } catch (e) { /* ignore */ }
+    try { doc.addImage(lev.firma_cliente, extraerExtension(lev.firma_cliente).toUpperCase(), 85, y + 3, 55, 28); } catch (e) { /* ignore */ }
+  }
+  if (lev.firma_tecnico || lev.firma_cliente) {
+    y += 36;
+  }
+
+  // Fotos — cuadrícula de 3 columnas, con salto de página automático.
+  if (Array.isArray(lev.fotos) && lev.fotos.length > 0) {
+    if (y > pageHeight - 20) {
+      doc.addPage();
+      y = 16;
+    }
+    doc.setFontSize(11);
+    doc.setTextColor(13, 76, 146);
+    doc.text(`Fotos (${lev.fotos.length})`, 14, y);
+    y += 6;
+
+    const imgW = 58;
+    const imgH = 44;
+    const gap = 4;
+    const cols = 3;
+    let col = 0;
+
+    lev.fotos.forEach((foto) => {
+      if (y + imgH > pageHeight - 12) {
+        doc.addPage();
+        y = 16;
+        col = 0;
+      }
+      const x = 14 + col * (imgW + gap);
+      try {
+        doc.addImage(foto, extraerExtension(foto).toUpperCase(), x, y, imgW, imgH);
+      } catch (e) { /* ignore */ }
+
+      col++;
+      if (col >= cols) {
+        col = 0;
+        y += imgH + gap;
+      }
+    });
   }
 
   doc.save(`Levantamiento_${lev.folio || lev.id}.pdf`);
