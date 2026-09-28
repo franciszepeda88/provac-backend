@@ -6,6 +6,7 @@ import BandaTransporteForm from './forms/BandaTransporteForm';
 import BandaTransmisionForm from './forms/BandaTransmisionForm';
 import BandaModularForm from './forms/BandaModularForm';
 import BandaThermodriveForm from './forms/BandaThermodriveForm';
+import heroImg from './assets/hero.png';
 import './App.css';
 
 function App() {
@@ -108,8 +109,24 @@ function App() {
                 </button>
               )}
             </div>
-            <button onClick={handleLogout}>Cerrar Sesión</button>
+            <div className="navbar-user-area">
+              <span className="navbar-user">{usuario.nombre}</span>
+              <button onClick={handleLogout}>Cerrar Sesión</button>
+            </div>
           </nav>
+
+          <div className="admin-hero" style={{ backgroundImage: `url(${heroImg})` }}>
+            <div className="admin-hero-overlay" />
+            <div className="admin-hero-text">
+              <div className="admin-hero-eyebrow">
+                <span className="admin-hero-eyebrow-bar" />
+                <span>PANEL DE ADMINISTRACIÓN</span>
+              </div>
+              <h1>Bienvenido, {(usuario.nombre || '').split(' ')[0]}</h1>
+              <p>Gestiona los levantamientos y usuarios del sistema PROVAC</p>
+            </div>
+          </div>
+
           <main>
             {vista === 'usuarios' ? <Usuarios /> : <Dashboard onEditar={handleEditar} />}
           </main>

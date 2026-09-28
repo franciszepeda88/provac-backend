@@ -107,3 +107,87 @@ main p {
   color: #082F5C;
   border-color: white;
 }
+
+.navbar-user-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navbar-user {
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.92;
+}
+
+.admin-hero {
+  position: relative;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: 65% center;
+  background-repeat: no-repeat;
+}
+
+.admin-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(8, 47, 92, 0.94) 0%,
+    rgba(8, 47, 92, 0.8) 45%,
+    rgba(8, 47, 92, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+.admin-hero-text {
+  position: relative;
+  z-index: 1;
+  padding: 22px 24px;
+  max-width: 480px;
+}
+
+.admin-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 8px;
+}
+
+.admin-hero-eyebrow-bar {
+  width: 24px;
+  height: 3px;
+  background: #4CAF50;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.admin-hero-text h1 {
+  color: white;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.admin-hero-text p {
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.88rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .admin-hero {
+    min-height: 120px;
+  }
+  .admin-hero-text h1 {
+    font-size: 1.3rem;
+  }
+}

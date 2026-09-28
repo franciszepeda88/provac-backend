@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { API_URL } from '../config';
 import './Usuarios.css';
 
@@ -11,6 +11,7 @@ export default function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [busqueda, setBusqueda] = useState('');
 
   const [mostrarForm, setMostrarForm] = useState(false);
   const [nuevoNombre, setNuevoNombre] = useState('');
@@ -172,6 +173,32 @@ export default function Usuarios() {
     }
   };
 
+  const eliminarUsuario = async (u) => {
+    if (!window.confirm(`¿Eliminar al usuario "${u.nombre}" (${u.email})? Esta acción no se puede deshacer.`)) return;
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_URL}/usuarios/${u.id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'No se pudo eliminar el usuario');
+      setUsuarios(prev => prev.filter(x => x.id !== u.id));
+    } catch (err) {
+      alert('❌ ' + err.message);
+    }
+  };
+
+  const usuariosFiltrados = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    if (!q) return usuarios;
+    return usuarios.filter(u =>
+      (u.nombre || '').toLowerCase().includes(q) ||
+      (u.email || '').toLowerCase().includes(q) ||
+      (ROL_LABELS[u.rol] || u.rol || '').toLowerCase().includes(q)
+    );
+  }, [busqueda, usuarios]);
+
   return (
     <div className="usr-container">
       <div className="usr-header">
@@ -180,6 +207,14 @@ export default function Usuarios() {
           {mostrarForm ? 'Cancelar' : '+ Nuevo Usuario'}
         </button>
       </div>
+
+      <input
+        type="text"
+        className="usr-search-input"
+        placeholder="Buscar por nombre, correo o rol..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
+      />
 
       {mostrarForm && (
         <form className="usr-form" onSubmit={crearUsuario}>
@@ -229,7 +264,7 @@ export default function Usuarios() {
               </tr>
             </thead>
             <tbody>
-              {usuarios.map(u => (
+              {usuariosFiltrados.map(u => (
                 <tr key={u.id}>
                   <td>
                     {u.nombre}
@@ -261,11 +296,18 @@ export default function Usuarios() {
                     >
                       Restablecer contraseña
                     </button>
+                    <button
+                      type="button"
+                      className="usr-btn-eliminar"
+                      onClick={() => eliminarUsuario(u)}
+                    >
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}
-              {usuarios.length === 0 && (
-                <tr><td colSpan={5} className="usr-hint">No hay usuarios registrados.</td></tr>
+              {usuariosFiltrados.length === 0 && (
+                <tr><td colSpan={5} className="usr-hint">{busqueda ? 'No se encontraron usuarios.' : 'No hay usuarios registrados.'}</td></tr>
               )}
             </tbody>
           </table>

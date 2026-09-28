@@ -175,6 +175,7 @@ export default function Dashboard({ onEditar }) {
             <tr>
               <th>Folio</th>
               <th>Cliente</th>
+              <th>Referencia de Banda</th>
               <th>Tipo de Banda</th>
               <th>Estado</th>
               <th>Fecha</th>
@@ -189,6 +190,7 @@ export default function Dashboard({ onEditar }) {
                   <tr key={lev.id} className={grupo.length > 1 ? 'fila-multibanda' : undefined}>
                     {idx === 0 && <td rowSpan={grupo.length}>{lev.folio || '—'}{grupo.length > 1 && <span className="badge-multibanda">{grupo.length} bandas</span>}</td>}
                     {idx === 0 && <td rowSpan={grupo.length}>{lev.cliente_nombre}</td>}
+                    <td>{lev.datos?.referencia_banda || '—'}</td>
                     <td>{TIPO_LABELS[lev.tipo_banda] || lev.tipo_banda || '—'}</td>
                     <td>
                       <span className={`badge badge-${lev.estado}`}>{lev.estado || 'completo'}</span>
@@ -206,7 +208,7 @@ export default function Dashboard({ onEditar }) {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="no-data">No hay levantamientos</td>
+                <td colSpan="8" className="no-data">No hay levantamientos</td>
               </tr>
             )}
           </tbody>

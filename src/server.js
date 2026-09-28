@@ -168,6 +168,31 @@ app.put('/api/usuarios/:id/reset-password', verificarToken, verificarAdmin, asyn
   }
 });
 
+// ELIMINAR usuario (solo admin): DELETE /api/usuarios/:id
+// No permite que un admin se elimine a sí mismo (evita quedarse sin acceso).
+app.delete('/api/usuarios/:id', verificarToken, verificarAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (String(id) === String(req.usuario.id)) {
+      return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta' });
+    }
+
+    const { error } = await supabase
+      .from('users')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.json({ mensaje: '✅ Usuario eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // SOLICITAR RESTABLECIMIENTO de contraseña (público, sin login): POST /api/auth/solicitar-reset
 // No hay servicio de correo configurado todavía, así que esto NO envía ningún email:
 // marca la solicitud para que el admin la vea en el panel de Usuarios y le comparta
